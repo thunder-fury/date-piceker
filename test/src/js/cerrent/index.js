@@ -27,19 +27,19 @@ var ThunderDatePicker = /** @class */ (function () {
     };
     ThunderDatePicker.prototype.changeYearMonth = function (year, month) {
         var monthDay = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        var firstDayOfWeek = this.getFirstDayOfWeek(year, month);
+        var arrCalender = [];
+        var remainDay = 7 - (arrCalender.length % 7);
         if (month == 2) {
             if (this.checkLeapYear(year))
                 monthDay[1] = 29;
         }
-        var firstDayOfWeek = this.getFirstDayOfWeek(year, month);
-        var arrCalender = [];
         for (var i = 0; i < firstDayOfWeek; i++) {
             arrCalender.push('');
         }
         for (var i = 1; i <= monthDay[month - 1]; i++) {
             arrCalender.push(String(i));
         }
-        var remainDay = 7 - (arrCalender.length % 7);
         if (remainDay < 7) {
             for (var i = 0; i < remainDay; i++) {
                 arrCalender.push('');
@@ -62,7 +62,7 @@ var ThunderDatePicker = /** @class */ (function () {
                     h.push('<div data-setdate disabled class="currentDay saturday is-disabled">' + data[i] + '</div>');
                 }
                 else {
-                    h.push('<div data-setdate class="currentDay saturday">' + data[i] + '</div>');
+                    h.push('<div data-setdate class="currentDay workday saturday">' + data[i] + '</div>');
                 }
             }
             else if (i % 7 == 6) {
@@ -70,7 +70,7 @@ var ThunderDatePicker = /** @class */ (function () {
                     h.push('<div data-setdate disabled class="currentDay sunday is-disabled">' + data[i] + '</div>');
                 }
                 else {
-                    h.push('<div data-setdate class="currentDay sunday">' + data[i] + '</div>');
+                    h.push('<div data-setdate class="currentDay workday sunday">' + data[i] + '</div>');
                 }
             }
             else {
@@ -94,19 +94,30 @@ var ThunderDatePicker = /** @class */ (function () {
                             currentMonth = currentMonth = 12;
                         }
                         break;
-                    default:
+                    case 'next':
                         currentMonth++;
                         if (currentMonth == 13) {
                             currentYear = currentYear + 1;
                             currentMonth = 1;
                         }
                         break;
+                    default:
+                        break;
                 }
-                _this.current.yearElm.value = currentYear;
-                _this.current.monthElm.value = currentMonth;
+                _this.dateWatch(currentYear, currentMonth);
                 _this.changeYearMonth(currentYear, currentMonth);
             });
+            currentNation.addEventListener('change', function () {
+                currentYear = parseInt(_this.current.yearElm.value);
+                currentMonth = parseInt(_this.current.monthElm.value);
+                _this.dateWatch(currentYear, currentMonth);
+            });
         });
+    };
+    ThunderDatePicker.prototype.dateWatch = function (currentYear, currentMonth) {
+        this.current.yearElm.value = currentYear;
+        this.current.monthElm.value = currentMonth;
+        this.changeYearMonth(currentYear, currentMonth);
     };
     ThunderDatePicker.prototype.setDate = function () {
         var _this = this;
@@ -121,7 +132,7 @@ var ThunderDatePicker = /** @class */ (function () {
                         setdateElm.classList.add("is-disabled");
                     }
                     else {
-                        _this.current.inputdateElm.value = _this.current.yearElm.value + _this.current.monthElm.value + day;
+                        _this.current.inputdateElm.value = _this.current.yearElm.value + _this.current.monthElm.value + Number(day);
                     }
                 });
             });
@@ -132,6 +143,15 @@ var ThunderDatePicker = /** @class */ (function () {
         this.current.monthElm.value = this.current.month;
         this.changeYearMonth(this.current.year, this.current.month);
         this.changeMonth(this.current.nation, this.current.year, this.current.month);
+        this.display(this.current.inputdateElm);
+    };
+    ThunderDatePicker.prototype.display = function (elm) {
+        var thunderFuryDatePicker = document.querySelector('.thunderFury-datePicker');
+        if (thunderFuryDatePicker) {
+            elm.addEventListener('click', function () {
+                thunderFuryDatePicker.classList.toggle('is-show');
+            });
+        }
     };
     return ThunderDatePicker;
 }());

@@ -1,12 +1,18 @@
+.thunderFury-datePicker {
+  display: none;
+}
 .container {
   max-width: 250px;
   width: 100%;
+  
   .weekdays {
     margin-top: 20px;
     display: flex;
+    border-bottom: 1px solid;
     .weekdayItem {
       width: calc(100% / 7);
       text-align: center;
+      cursor: pointer;
     }
   }
 }
@@ -16,11 +22,16 @@
     text-align: center;
     padding: 5px;
     cursor: pointer;
+    max-width: 25px;
     width: calc(100% / 7);
     
   }
   .workday {
     color: $workday;
+    &:hover {
+      background-color: $black;
+      color: $white;
+    }
   }
   .sunday {
     color: $sunday;

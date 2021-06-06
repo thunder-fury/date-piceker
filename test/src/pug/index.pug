@@ -8,18 +8,18 @@ html(lang="ja")
 		title DatePicker
 	body
 		.container
-			input( type="text" data-inputDate )
-			div
-				button(type="button" data-currentNation='pre') <
-				input#year(data-year type="number", name="year" value="")
-				select#month(data-month name="")
-					- let months = ['1','2','3','4','5','6','7','8','9','10','11','12']
-					each month in months
-						option(value=month) #{month}월
-				button(type="button" data-currentNation='next') >
+			input( type="text" data-inputDate)
+		.thunderFury-datePicker
+			button(type="button" data-currentNation='pre') <
+			input#year(data-year data-currentNation='year' type="number", name="year" value="")
+			select#month(data-month name="" data-currentNation='month')
+				- let months = ['1','2','3','4','5','6','7','8','9','10','11','12']
+				each month in months
+					option(value=month) #{month}월
+			button(type="button" data-currentNation='next') >
 			.weekdays
 				- let days = ['일','월','화','수','목','금','토']
 				each day in days
-					div.weekdayItem(style='border: solid 1px;') #{day}
+					div.weekdayItem #{day}
 			div(data-currentBody)
 		script(src="./js/app.js")
