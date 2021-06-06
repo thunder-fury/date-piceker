@@ -1,0 +1,38 @@
+.container {
+  max-width: 250px;
+  width: 100%;
+  .weekdays {
+    margin-top: 20px;
+    display: flex;
+    .weekdayItem {
+      width: calc(100% / 7);
+      text-align: center;
+    }
+  }
+}
+.currentRow {
+  display: flex;
+  .currentDay {
+    text-align: center;
+    padding: 5px;
+    cursor: pointer;
+    width: calc(100% / 7);
+    
+  }
+  .workday {
+    color: $workday;
+  }
+  .sunday {
+    color: $sunday;
+    &.is-disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .saturday {
+    color: $saturday;
+    &.is-disabled {
+      cursor: not-allowed;
+    }
+  }
+}

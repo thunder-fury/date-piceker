@@ -1,0 +1,35 @@
+{
+  "name": "form-validate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc --watch",
+    "test": "cd test && npm run start"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "secretlint"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thuder-fury/fade-event/.git"
+  },
+  "author": "wiz-creative",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thuder-fury/fade-event/issues"
+  },
+  "homepage": "https://github.com/thuder-fury/fade-event/#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
+}
