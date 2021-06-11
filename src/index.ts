@@ -1,18 +1,28 @@
-export class ThunderDatePicker {
-  current: {
-    inputdateElm: any,
-    yearElm: any
-    monthElm: any
-    year: number,
-    month: number,
-    nation: Element
-    body: Element,
-    weekend: boolean
+class Showcalendar {
+  constructor(private calendar:Element, private inputDate: HTMLInputElement) {
   }
-  constructor(current:{inputdateElm:any, yearElm:any, monthElm:any, year:number, month: number,  nation:Element, body:Element, weekend:boolean}) {
-    this.current = current
+  calendarDisplay() {
+    console.log(this.calendar)
+    this.inputDate.addEventListener('click', () =>{
+      this.calendar.classList.toggle('is-show')
+    })
   }
-  checkLeapYear(year: number): boolean {
+}
+
+class RenderCrrent {
+  //TODO: 型確認
+  private yearElm: any
+  private monthElm: any
+  constructor(private inputDate: HTMLInputElement, private weekend:boolean) {
+    this.yearElm = document.querySelector('[data-year]')
+    this.monthElm = document.querySelector('[data-month]')
+  }
+
+  get calendar(): any {
+    return { yearElm: this.yearElm, monthElm: this.monthElm }
+  }
+
+  private checkLeapYear(year: number): boolean {
     // 윤년 계산
     if(year%400 == 0) {
       return true
@@ -25,14 +35,17 @@ export class ThunderDatePicker {
     }
   }
 
-  getFirstDayOfWeek(year:number, month: string | number):number {
+  private getFirstDayOfWeek(year:number, month: string | number):number {
     if(month < 10) month = '0' + month
     return (new Date(year+'-'+month+'-01')).getDay()
   }
-
-  changeYearMonth(year: number , month: number): void {
+  private getLastDayOfweek(year:number, month: number):number {
+    return new Date( year, month + 1, 0 ).getDay()
+  }
+  public changeYearMonth(year: number , month: number): void {
     let monthDay = [31,28,31,30,31,30,31,31,30,31,30,31]
     let firstDayOfWeek = this.getFirstDayOfWeek(year, month)
+    let lastDayOfWeek = 7 - this.getLastDayOfweek(year, month - 1) - 1
     let arrCalender = []
     let remainDay = 7 - (arrCalender.length%7)
 
@@ -53,109 +66,171 @@ export class ThunderDatePicker {
         arrCalender.push('')
       }
     }
-    this.renderCalendar(arrCalender, this.current.body)
+
+    for (let i = 0; i <= lastDayOfWeek; i++) {
+      arrCalender.push('')
+    }
+    let calendarBody:any = document.querySelector(`[data-calendarBody]`)
+    this.renderCalendar(arrCalender, calendarBody)
   }
 
-  renderCalendar(data: any, currentBody: Element): void {
+  private renderCalendar(date: any, calendarBody: Element): void {
     let h = []
-    for (let i = 0; i <data.length; i++) {
+    for (let i = 0; i <date.length; i++) {
       if(i == 0) {
-        h.push(`<div class='currentRow'>`)
+        h.push(`<div class='calendarRow'>`)
       }else if(i%7 == 0) {
         h.push(`</div>`)
-        h.push(`<div class='currentRow'>`)
+        h.push(`<div class='calendarRow'>`)
       } 
+      // 일요일
       if(i%7 == 0) {
-        if(this.current.weekend) {
-          h.push('<div data-setdate disabled class="currentDay saturday is-disabled">' + data[i] + '</div>')
+        if(this.weekend) {
+          h.push('<div data-setdate disabled class="calendarDay saturday is-disabled">' + date[i] + '</div>')
         } else {
-          h.push('<div data-setdate class="currentDay workday saturday">' + data[i] + '</div>')
+          h.push('<div data-setdate class="calendarDay workday saturday">' + date[i] + '</div>')
         }
+      // 토요일
       } else if(i%7 == 6) {
-        if(this.current.weekend) {
-          h.push('<div data-setdate disabled class="currentDay sunday is-disabled">' + data[i] + '</div>')
+        if(this.weekend) {
+          h.push('<div data-setdate disabled class="calendarDay sunday is-disabled">' + date[i] + '</div>')
         } else {
-          h.push('<div data-setdate class="currentDay workday sunday">' + data[i] + '</div>')
+          h.push('<div data-setdate class="calendarDay workday sunday">' + date[i] + '</div>')
         }
       } else {
-        h.push('<div data-setdate class="currentDay workday">' + data[i] + '</div>')
+        h.push('<div data-setdate class="calendarDay workday">' + date[i] + '</div>')
       }
     }
     h.push('</div>')
-    currentBody.innerHTML = h.join('')
+    calendarBody.innerHTML = h.join('')
     this.setDate()
   }
+  private setDate(): void {
+    let setdateElms = document.querySelectorAll('[data-setdate]')
+    setdateElms.forEach((setdateElm: any) => {
+      setdateElm.addEventListener('click', () => {
+        let day: number = setdateElm.innerText
+        if(day<10) day = 0 + day
+        if(setdateElm.attributes['disabled']) {
+          setdateElm.classList.add("is-disabled")
+        } else {
+          setTimeout(() => {
+            this.inputDate.value = this.yearElm.value + this.monthElm.value + day
+          }, 500);
+        }
+      })
+    });
+  }
+}
+
+
+class PushingParen {
+  constructor(private days: string[], private months: string[]) {}
+  public setParentLayout(calendarElm: HTMLElement){
+    let calendarLayout = []
+    calendarLayout.push(`<div data-controller></div>`)
+    calendarLayout.push(`<div data-weekdays class='weekdays'></div>`)
+    calendarLayout.push(`<div data-calendarBody></div>`)
+    calendarElm.innerHTML = calendarLayout.join('')
+  }
+  public controllersRender() {
+    const controller = document.querySelector(`[data-controller]`) as HTMLElement
+    const arrControllers = []
+    arrControllers.push(`<button type="button" data-calendarNation='pre'> < </button>`)
+    arrControllers.push(`<input data-year data-calendarNation='year' type='number' value=''/>`)
+    arrControllers.push(`<select data-month name='' data-calendarNation='month'></select>`)
+    arrControllers.push(`<button type="button" data-calendarNation='next'> > </button>`)
+    controller.innerHTML = arrControllers.join('')
+
+    setTimeout(() => {
+      for (let i = 0; i < this.months.length; i++) {
+        const monthElm:any = document.querySelector('[data-month]')
+        let option = document.createElement('option')
+        option.value = this.months[i]
+        option.text = `${this.months[i]}월`
+        monthElm.appendChild(option);
+      }
+    }, 500);
+  }
+  public setDays() {
+    let arrDays = []
+    let days:any = document.querySelector(`[data-weekdays]`)
+    for (let i = 0; i < this.days.length; i++) {
+      arrDays.push(`<div class='weekdayItem'>${this.days[i]}</div>`)
+    }
+    days.innerHTML = arrDays.join('')  
+  }
   
-  changeMonth(currentNations: any, currentYear: number, currentMonth: number): void {
-    currentNations.forEach((currentNation:Element) => {
-      currentNation.addEventListener('click', () => {
-        let nationVal = currentNation.getAttribute('data-currentNation');
+}
+
+
+
+class Nation extends RenderCrrent{
+  constructor(inputDate: HTMLInputElement, weekend:boolean){
+    super(inputDate, weekend)
+  }
+  changeMonth(year: number, month: number): void {
+    let calendarNations = document.querySelectorAll('[data-calendarNation]')
+    calendarNations.forEach((calendarNation:Element) => {
+      calendarNation.addEventListener('click', () => {
+        let nationVal = calendarNation.getAttribute('data-calendarNation');
         switch (nationVal) {
           case 'pre':
-            currentMonth--;
-            if (currentMonth == 0) {
-              currentYear = currentYear - 1;
-              currentMonth = currentMonth = 12;
+            month--;
+            if (month == 0) {
+              year = year - 1;
+              year = month = 12;
             }
             break
           case 'next':
-            currentMonth++;
-            if (currentMonth == 13) {
-              currentYear = currentYear + 1;
-              currentMonth = 1;
+            month++;
+            if (month == 13) {
+              year = year + 1;
+              month = 1;
             }
             break
-          default:
-          break
         }
-        this.dateWatch(currentYear, currentMonth)
-        this.changeYearMonth(currentYear, currentMonth);
-      })
-      currentNation.addEventListener('change', () =>{
-        currentYear = parseInt(this.current.yearElm.value)
-        currentMonth = parseInt(this.current.monthElm.value)
-        this.dateWatch(currentYear, currentMonth)
+        calendarNation.addEventListener('change', () =>{
+          this.dateWatch(parseInt(this.calendar.monthElm.value), parseInt(this.calendar.monthElm.value))
+        })
+        this.dateWatch(year, month)
+        this.changeYearMonth(year, month);
       })
     })
   }
-
-  dateWatch(currentYear: number, currentMonth:number): void {
-    this.current.yearElm.value = currentYear;
-    this.current.monthElm.value = currentMonth;
-    this.changeYearMonth(currentYear, currentMonth);
-  }
-
-  setDate(): void {
-    setTimeout(() => {
-      let setdateElms = document.querySelectorAll('[data-setdate]')
-      setdateElms.forEach((setdateElm: any) => {
-        setdateElm.addEventListener('click', () => {
-          let day: number = setdateElm.innerText
-          if(day<10) day = 0 + day
-          if(setdateElm.attributes['disabled']) {
-            setdateElm.classList.add("is-disabled")
-          } else {
-            this.current.inputdateElm.value = this.current.yearElm.value + this.current.monthElm.value + Number(day)
-          }
-        })
-      });
-    }, 500)
-  }
-
-  init() {
-    this.current.yearElm.value = this.current.year
-    this.current.monthElm.value = this.current.month;
-    this.changeYearMonth(this.current.year, this.current.month)
-    this.changeMonth(this.current.nation, this.current.year, this.current.month)
-    this.display(this.current.inputdateElm)
-  }
-  
-  display(elm:Element) {
-    let thunderFuryDatePicker: any = document.querySelector('.thunderFury-datePicker')
-    if(thunderFuryDatePicker) {
-      elm.addEventListener('click', () =>{
-        thunderFuryDatePicker.classList.toggle('is-show')
-      })
-    }
+  dateWatch(year: number, month:number): void {
+    this.changeYearMonth(year, month)
   }
 }
+
+
+
+export class ThunderDatePicker {
+  constructor(
+    private paren:HTMLElement, 
+    private option:{inputDate: HTMLInputElement, year: number, month: number, weekend:boolean, days: string[], months: string[]}) {
+  }
+  pushingParen() {
+    const pushingParen = new PushingParen(this.option.days, this.option.months)
+    pushingParen.setParentLayout(this.paren)
+    pushingParen.controllersRender()
+    pushingParen.setDays()
+  }
+  
+  renderDays() {
+    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend)
+    const nation = new Nation(this.option.inputDate, this.option.weekend)
+    nation.changeMonth(this.option.year, this.option.month)
+    renderCrrent.changeYearMonth(this.option.year, this.option.month)
+  }
+  calendarToggle() {
+    const showcalendarnew = new Showcalendar(this.paren, this.option.inputDate)
+    showcalendarnew.calendarDisplay();
+  }
+  init() {
+    this.pushingParen()
+    this.calendarToggle()
+    this.renderDays()
+  }
+}
+

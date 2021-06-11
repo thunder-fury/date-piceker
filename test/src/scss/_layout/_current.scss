@@ -1,7 +1,4 @@
 .thunderFury-datePicker {
-  display: none;
-}
-.container {
   max-width: 250px;
   width: 100%;
   
@@ -16,9 +13,9 @@
     }
   }
 }
-.currentRow {
+.calendarRow {
   display: flex;
-  .currentDay {
+  .calendarDay {
     text-align: center;
     padding: 5px;
     cursor: pointer;
