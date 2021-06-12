@@ -13,7 +13,7 @@ class RenderCrrent {
   //TODO: 型確認
   private yearElm: any
   private monthElm: any
-  constructor(private inputDate: HTMLInputElement, private weekend:boolean) {
+  constructor(private inputDate?: any, private weekend?:boolean) {
     this.yearElm = document.querySelector('[data-year]')
     this.monthElm = document.querySelector('[data-month]')
   }
@@ -48,7 +48,7 @@ class RenderCrrent {
     let lastDayOfWeek = 7 - this.getLastDayOfweek(year, month - 1) - 1
     let arrCalender = []
     let remainDay = 7 - (arrCalender.length%7)
-
+    
     if(month == 2) {
       if(this.checkLeapYear(year)) monthDay[1] = 29
     } 
@@ -116,7 +116,7 @@ class RenderCrrent {
         } else {
           setTimeout(() => {
             this.inputDate.value = this.yearElm.value + this.monthElm.value + day
-          }, 500);
+          }, 100);
         }
       })
     });
@@ -124,8 +124,10 @@ class RenderCrrent {
 }
 
 
-class PushingParen {
-  constructor(private days: string[], private months: string[]) {}
+class PushingParen extends RenderCrrent{
+  constructor( private days: string[], private months: string[], private year: number, private month: number, inputDate?: HTMLInputElement, weekend?:boolean,) {
+    super(inputDate, weekend)
+  }
   public setParentLayout(calendarElm: HTMLElement){
     let calendarLayout = []
     calendarLayout.push(`<div data-controller></div>`)
@@ -137,7 +139,7 @@ class PushingParen {
     const controller = document.querySelector(`[data-controller]`) as HTMLElement
     const arrControllers = []
     arrControllers.push(`<button type="button" data-calendarNation='pre'> < </button>`)
-    arrControllers.push(`<input data-year data-calendarNation='year' type='number' value=''/>`)
+    arrControllers.push(`<input data-year data-select='year' type='number' value=''/>`)
     arrControllers.push(`<select data-month name='' data-calendarNation='month'></select>`)
     arrControllers.push(`<button type="button" data-calendarNation='next'> > </button>`)
     controller.innerHTML = arrControllers.join('')
@@ -150,7 +152,11 @@ class PushingParen {
         option.text = `${this.months[i]}월`
         monthElm.appendChild(option);
       }
-    }, 500);
+      const yearElm:any  = document.querySelector('[data-year]');
+      const monthElm: any = document.querySelector('[data-month]');
+      yearElm.value = this.year
+      monthElm.value = this.month
+    }, 100);
   }
   public setDays() {
     let arrDays = []
@@ -162,7 +168,6 @@ class PushingParen {
   }
   
 }
-
 
 
 class Nation extends RenderCrrent{
@@ -190,20 +195,24 @@ class Nation extends RenderCrrent{
             }
             break
         }
-        calendarNation.addEventListener('change', () =>{
-          this.dateWatch(parseInt(this.calendar.monthElm.value), parseInt(this.calendar.monthElm.value))
-        })
         this.dateWatch(year, month)
-        this.changeYearMonth(year, month);
+        this.changeYearMonth(year, month)
       })
     })
+    calendarNations.forEach(selectNation => {
+      console.log(selectNation)
+      selectNation.addEventListener('change', () =>{
+        this.dateWatch(year, month)
+        this.changeYearMonth(year, month)
+      })
+    });
+    
   }
   dateWatch(year: number, month:number): void {
-    this.changeYearMonth(year, month)
+    this.calendar.yearElm.value = year;
+    this.calendar.monthElm.value = month;
   }
 }
-
-
 
 export class ThunderDatePicker {
   constructor(
@@ -211,7 +220,7 @@ export class ThunderDatePicker {
     private option:{inputDate: HTMLInputElement, year: number, month: number, weekend:boolean, days: string[], months: string[]}) {
   }
   pushingParen() {
-    const pushingParen = new PushingParen(this.option.days, this.option.months)
+    const pushingParen = new PushingParen(this.option.days, this.option.months, this.option.year, this.option.month)
     pushingParen.setParentLayout(this.paren)
     pushingParen.controllersRender()
     pushingParen.setDays()
@@ -231,6 +240,7 @@ export class ThunderDatePicker {
     this.pushingParen()
     this.calendarToggle()
     this.renderDays()
+    
+    
   }
 }
-

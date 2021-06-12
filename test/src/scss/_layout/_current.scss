@@ -1,7 +1,7 @@
 .thunderFury-datePicker {
   max-width: 250px;
   width: 100%;
-  
+  font-family: "Noto Sans CJK JP", "Noto Sans CJK JP Subset", "Noto Sans", Montserrat, sans-serif;
   .weekdays {
     margin-top: 20px;
     display: flex;
@@ -21,7 +21,7 @@
     cursor: pointer;
     max-width: 25px;
     width: calc(100% / 7);
-    
+    font-weight: bold;
   }
   .workday {
     color: $workday;
@@ -34,6 +34,7 @@
     color: $sunday;
     &.is-disabled {
       cursor: not-allowed;
+      color: $disabled;
     }
   }
 
@@ -41,6 +42,7 @@
     color: $saturday;
     &.is-disabled {
       cursor: not-allowed;
+      color: $disabled;
     }
   }
 }

@@ -144,17 +144,22 @@ var RenderCrrent = /** @class */ (function () {
                 else {
                     setTimeout(function () {
                         _this.inputDate.value = _this.yearElm.value + _this.monthElm.value + day;
-                    }, 500);
+                    }, 100);
                 }
             });
         });
     };
     return RenderCrrent;
 }());
-var PushingParen = /** @class */ (function () {
-    function PushingParen(days, months) {
-        this.days = days;
-        this.months = months;
+var PushingParen = /** @class */ (function (_super) {
+    __extends(PushingParen, _super);
+    function PushingParen(days, months, year, month, inputDate, weekend) {
+        var _this = _super.call(this, inputDate, weekend) || this;
+        _this.days = days;
+        _this.months = months;
+        _this.year = year;
+        _this.month = month;
+        return _this;
     }
     PushingParen.prototype.setParentLayout = function (calendarElm) {
         var calendarLayout = [];
@@ -168,19 +173,23 @@ var PushingParen = /** @class */ (function () {
         var controller = document.querySelector("[data-controller]");
         var arrControllers = [];
         arrControllers.push("<button type=\"button\" data-calendarNation='pre'> < </button>");
-        arrControllers.push("<input data-year data-calendarNation='year' type='number' value=''/>");
+        arrControllers.push("<input data-year data-select='year' type='number' value=''/>");
         arrControllers.push("<select data-month name='' data-calendarNation='month'></select>");
         arrControllers.push("<button type=\"button\" data-calendarNation='next'> > </button>");
         controller.innerHTML = arrControllers.join('');
         setTimeout(function () {
             for (var i = 0; i < _this.months.length; i++) {
-                var monthElm = document.querySelector('[data-month]');
+                var monthElm_1 = document.querySelector('[data-month]');
                 var option = document.createElement('option');
                 option.value = _this.months[i];
                 option.text = _this.months[i] + "\uC6D4";
-                monthElm.appendChild(option);
+                monthElm_1.appendChild(option);
             }
-        }, 500);
+            var yearElm = document.querySelector('[data-year]');
+            var monthElm = document.querySelector('[data-month]');
+            yearElm.value = _this.year;
+            monthElm.value = _this.month;
+        }, 100);
     };
     PushingParen.prototype.setDays = function () {
         var arrDays = [];
@@ -191,7 +200,7 @@ var PushingParen = /** @class */ (function () {
         days.innerHTML = arrDays.join('');
     };
     return PushingParen;
-}());
+}(RenderCrrent));
 var Nation = /** @class */ (function (_super) {
     __extends(Nation, _super);
     function Nation(inputDate, weekend) {
@@ -219,16 +228,21 @@ var Nation = /** @class */ (function (_super) {
                         }
                         break;
                 }
-                calendarNation.addEventListener('change', function () {
-                    _this.dateWatch(parseInt(_this.calendar.monthElm.value), parseInt(_this.calendar.monthElm.value));
-                });
+                _this.dateWatch(year, month);
+                _this.changeYearMonth(year, month);
+            });
+        });
+        calendarNations.forEach(function (selectNation) {
+            console.log(selectNation);
+            selectNation.addEventListener('change', function () {
                 _this.dateWatch(year, month);
                 _this.changeYearMonth(year, month);
             });
         });
     };
     Nation.prototype.dateWatch = function (year, month) {
-        this.changeYearMonth(year, month);
+        this.calendar.yearElm.value = year;
+        this.calendar.monthElm.value = month;
     };
     return Nation;
 }(RenderCrrent));
@@ -238,7 +252,7 @@ var ThunderDatePicker = /** @class */ (function () {
         this.option = option;
     }
     ThunderDatePicker.prototype.pushingParen = function () {
-        var pushingParen = new PushingParen(this.option.days, this.option.months);
+        var pushingParen = new PushingParen(this.option.days, this.option.months, this.option.year, this.option.month);
         pushingParen.setParentLayout(this.paren);
         pushingParen.controllersRender();
         pushingParen.setDays();
