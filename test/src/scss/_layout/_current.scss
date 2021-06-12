@@ -22,6 +22,10 @@
     max-width: 25px;
     width: calc(100% / 7);
     font-weight: bold;
+    &.is-disabled {
+      cursor: not-allowed;
+      color: $disabled;
+    }
   }
   .workday {
     color: $workday;
