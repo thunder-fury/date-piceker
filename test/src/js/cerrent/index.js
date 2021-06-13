@@ -112,67 +112,43 @@ var RenderCrrent = /** @class */ (function () {
                 arrDates.push("<div class='calendarRow'>");
             }
             // 일요일
-            if (i % 7 == 0) {
-                if (this.weekend) {
-                    arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+            // if(i%7 == 0) {
+            //   if(this.weekend) {
+            //     arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+            //   } else {
+            //     arrDates.push(`<div data-setdate class="calendarDay workday saturday">${date[i]}</div>`)
+            //   }
+            // // 토요일
+            // } 
+            // else if(i%7 == 6) {
+            //   if(this.weekend) {
+            //     arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+            //   } else {
+            //     arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
+            //   }
+            // } 
+            else if (this.disabled) {
+                if (year == this.getCurrentDate().year && month == this.getCurrentDate().month && i > this.getCurrentDate().day) {
+                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                }
+                else if (year < this.getCurrentDate().year && month < this.getCurrentDate().month) {
+                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                }
+                else if (year < this.getCurrentDate().year) {
+                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                }
+                else if (month > this.getCurrentDate().month) {
+                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                }
+                else if (year > this.getCurrentDate().year) {
+                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
                 }
                 else {
-                    arrDates.push("<div data-setdate class=\"calendarDay workday saturday\">" + date[i] + "</div>");
-                }
-                // 토요일
-            }
-            else if (i % 7 == 6) {
-                if (this.weekend) {
-                    arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
-                }
-                else {
-                    arrDates.push("<div data-setdate class=\"calendarDay workday sunday\"> " + date[i] + "</div>");
+                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
                 }
             }
             else {
-                if (this.disabled) {
-                    // 지금 년수 보다 선택된 년수가 크거나 같을경우
-                    // 선택된년수가 현재 년수 보다 작으면 선택 불가
-                    if (year < this.getCurrentDate().year) {
-                        arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
-                    }
-                    else {
-                        // 선택된년수가 현재 년수 보다 작으면 선택 불가
-                        if (month < this.getCurrentDate().month) {
-                            arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
-                        }
-                        else {
-                            arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
-                        }
-                    }
-                    // if(year <= this.getCurrentDate().year && month < this.getCurrentDate().month) {
-                    //   arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
-                    //   if(year < this.getCurrentDate().year){
-                    //     arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
-                    //   }
-                    // } else {
-                    //   arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
-                    // }
-                    // if(this.getCurrentDate().year >= this.yearElm.value ) {
-                    //   if (this.getCurrentDate().month > this.monthElm.value) {
-                    //     console.log(i)
-                    //     arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
-                    //   } else {
-                    //     arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
-                    //   }
-                    // } else {
-                    //   arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
-                    // }
-                }
-                else {
-                    arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
-                }
-                // 현재년수 보다 선택된 년수 가 크면 디새이블
-                // if(i > this.getCurrentDate().day) {
-                //   arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
-                // } else {
-                //   arrDates.push(`<div data-setdate class="calendarDay workday is-disabled">${date[i]}</div>`)
-                // }
+                arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
             }
         }
         arrDates.push('</div>');
