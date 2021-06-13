@@ -42,7 +42,7 @@ class RenderCrrent {
     return new Date( year, month + 1, 0 ).getDay()
   }
 
-  private getCurrentDate() {
+  private getCurrentDate(): {year: number, month:number, day: number} {
     return { 
       year: new Date().getFullYear(), 
       month: (new Date().getMonth() + 1), 
