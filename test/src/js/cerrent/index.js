@@ -30,9 +30,10 @@ var Showcalendar = /** @class */ (function () {
     return Showcalendar;
 }());
 var RenderCrrent = /** @class */ (function () {
-    function RenderCrrent(inputDate, weekend) {
+    function RenderCrrent(inputDate, weekend, disabled) {
         this.inputDate = inputDate;
         this.weekend = weekend;
+        this.disabled = disabled;
         this.yearElm = document.querySelector('[data-year]');
         this.monthElm = document.querySelector('[data-month]');
     }
@@ -129,12 +130,35 @@ var RenderCrrent = /** @class */ (function () {
                 }
             }
             else {
-                if (!this.getCurrentDate().year) {
-                    arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                if (this.disabled) {
+                    if (this.getCurrentDate().year >= this.yearElm.value) {
+                        if (this.getCurrentDate().month >= this.monthElm.value) {
+                            if (this.getCurrentDate().month > this.monthElm.value && i > this.getCurrentDate().day) {
+                                arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                            }
+                            else {
+                                arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                            }
+                        }
+                        else {
+                            arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                        }
+                    }
+                    else {
+                        arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                    }
+                    // else {
+                    //   if (this.getCurrentDate().month > this.monthElm.value) {
+                    //     arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
+                    //   } else {
+                    //     arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
+                    //   }
+                    // }
                 }
                 else {
                     arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
                 }
+                // 현재년수 보다 선택된 년수 가 크면 디새이블
                 // if(i > this.getCurrentDate().day) {
                 //   arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
                 // } else {
@@ -169,8 +193,8 @@ var RenderCrrent = /** @class */ (function () {
 }());
 var PushingParen = /** @class */ (function (_super) {
     __extends(PushingParen, _super);
-    function PushingParen(lang, months, year, month, inputDate, weekend) {
-        var _this = _super.call(this, inputDate, weekend) || this;
+    function PushingParen(lang, months, year, month, disabled, inputDate, weekend) {
+        var _this = _super.call(this, inputDate, weekend, disabled) || this;
         _this.lang = lang;
         _this.months = months;
         _this.year = year;
@@ -235,8 +259,8 @@ var PushingParen = /** @class */ (function (_super) {
 }(RenderCrrent));
 var Nation = /** @class */ (function (_super) {
     __extends(Nation, _super);
-    function Nation(inputDate, weekend) {
-        return _super.call(this, inputDate, weekend) || this;
+    function Nation(inputDate, weekend, disabled) {
+        return _super.call(this, inputDate, weekend, disabled) || this;
     }
     Nation.prototype.changeMonth = function (year, month) {
         var _this = this;
@@ -285,14 +309,14 @@ var ThunderDatePicker = /** @class */ (function () {
         this.option = option;
     }
     ThunderDatePicker.prototype.pushingParen = function () {
-        var pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month);
+        var pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled);
         pushingParen.setParentLayout(this.paren);
         pushingParen.controllersRender();
         pushingParen.setDays();
     };
     ThunderDatePicker.prototype.renderDays = function () {
-        var renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend);
-        var nation = new Nation(this.option.inputDate, this.option.weekend);
+        var renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled);
+        var nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled);
         nation.changeMonth(this.option.year, this.option.month);
         renderCrrent.changeYearMonth(this.option.year, this.option.month);
     };

@@ -12,7 +12,7 @@ class RenderCrrent {
   //TODO: 型確認
   private yearElm: any
   private monthElm: any
-  constructor(private inputDate?: any, private weekend?:boolean) {
+  constructor(private inputDate?: any, private weekend?:boolean, private disabled?:boolean) {
     this.yearElm = document.querySelector('[data-year]')
     this.monthElm = document.querySelector('[data-month]')
   }
@@ -107,11 +107,31 @@ class RenderCrrent {
           arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
         }
       } else {
-        if(!this.getCurrentDate().year) {
-          arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
+        if(this.disabled) {
+          if(this.getCurrentDate().year >= this.yearElm.value ) {
+            if (this.getCurrentDate().month >= this.monthElm.value) {
+              if(this.getCurrentDate().month > this.monthElm.value && i > this.getCurrentDate().day) {
+                arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+              } else {
+                arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
+              }
+            } else {
+              arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+            }
+          } else {
+            arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+          }
+          // else {
+          //   if (this.getCurrentDate().month > this.monthElm.value) {
+          //     arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
+          //   } else {
+          //     arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
+          //   }
+          // }
         } else {
           arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
         }
+        // 현재년수 보다 선택된 년수 가 크면 디새이블
         // if(i > this.getCurrentDate().day) {
         //   arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
         // } else {
@@ -147,9 +167,11 @@ class PushingParen extends RenderCrrent{
     private months: string[], 
     private year: number, 
     private month: number, 
+    disabled: boolean,
     inputDate?: HTMLInputElement, 
-    weekend?:boolean,) {
-    super(inputDate, weekend)
+    weekend?:boolean,
+    ) {
+    super(inputDate, weekend, disabled)
   }
   public setParentLayout(calendarElm: HTMLElement){
     let calendarLayout = []
@@ -206,8 +228,8 @@ class PushingParen extends RenderCrrent{
 }
 
 class Nation extends RenderCrrent{
-  constructor(inputDate: HTMLInputElement, weekend:boolean){
-    super(inputDate, weekend)
+  constructor(inputDate: HTMLInputElement, weekend:boolean, disabled: boolean){
+    super(inputDate, weekend, disabled)
   }
   changeMonth(year: number, month: number): void {
     let calendarNations = document.querySelectorAll('[data-calendarNation]')
@@ -253,6 +275,7 @@ export class ThunderDatePicker {
   constructor(
     private paren:HTMLElement, 
     private option:{
+      disabled: boolean
       inputDate: HTMLInputElement, 
       year: number, 
       month: number,
@@ -263,15 +286,15 @@ export class ThunderDatePicker {
     }) {
   }
   pushingParen() {
-    const pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month)
+    const pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled)
     pushingParen.setParentLayout(this.paren)
     pushingParen.controllersRender()
     pushingParen.setDays()
   }
   
   renderDays() {
-    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend)
-    const nation = new Nation(this.option.inputDate, this.option.weekend)
+    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled)
+    const nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
     nation.changeMonth(this.option.year, this.option.month)
     renderCrrent.changeYearMonth(this.option.year, this.option.month)
   }

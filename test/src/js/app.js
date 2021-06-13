@@ -1,15 +1,13 @@
 const { ThunderDatePicker } = require('./cerrent');
-const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth() + 1;
-const currentDay = new Date().getDate();
 const inputDate = document.querySelector('[data-inputDate]');
 const thunderFuryDatePicker = document.querySelector('.thunderFury-datePicker');
 const thunderDatePicker = new ThunderDatePicker(thunderFuryDatePicker, {
   inputDate: inputDate,
-  year: currentYear,
-  month: currentMonth,
-  today: currentDay,
+  year: new Date().getFullYear(),
+  month: new Date().getMonth() + 1,
+  today: new Date().getDate(),
   weekend: true,
+  disabled: true
 })
 console.log(thunderDatePicker)
 thunderDatePicker.init();
