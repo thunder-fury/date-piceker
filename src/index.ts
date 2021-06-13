@@ -184,7 +184,7 @@ class PushingParen extends RenderCrrent{
     calendarLayout.push(`<div data-calendarBody></div>`)
     calendarElm.innerHTML = calendarLayout.join('')
   }
-  public controllersRender(lang?: string) {
+  public controllersRender() {
     const controller = document.querySelector(`[data-controller]`) as HTMLElement
     const arrControllers = []
     arrControllers.push(`<button type="button" data-calendarNation='pre'> < </button>`)
@@ -238,7 +238,7 @@ class PushingParen extends RenderCrrent{
 }
 
 class Nation extends RenderCrrent{
-  constructor(inputDate: HTMLInputElement, weekend:boolean, disabled: boolean){
+  constructor(inputDate: HTMLInputElement, disabled: boolean, weekend?:boolean){
     super(inputDate, weekend, disabled)
   }
   changeMonth(year: number, month: number): void {
@@ -296,15 +296,28 @@ export class ThunderDatePicker {
     }) {
   }
   pushingParen() {
-    const pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled)
+    const pushingParen = new PushingParen(
+      this.option.lang, 
+      this.option.months, 
+      this.option.year, 
+      this.option.month, 
+      this.option.disabled
+    )
     pushingParen.setParentLayout(this.paren)
-    pushingParen.controllersRender(this.option.lang)
+    pushingParen.controllersRender()
     pushingParen.setDays()
   }
   
   renderDays() {
-    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled,)
-    const nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
+    const renderCrrent = new RenderCrrent(
+      this.option.inputDate, 
+      this.option.weekend, 
+      this.option.disabled
+    )
+    const nation = new Nation(
+      this.option.inputDate, 
+      this.option.disabled
+    )
     nation.changeMonth(this.option.year, this.option.month)
     renderCrrent.changeYearMonth(this.option.year, this.option.month)
   }

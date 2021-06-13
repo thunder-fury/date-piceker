@@ -220,7 +220,7 @@ var PushingParen = /** @class */ (function (_super) {
         calendarLayout.push("<div data-calendarBody></div>");
         calendarElm.innerHTML = calendarLayout.join('');
     };
-    PushingParen.prototype.controllersRender = function (lang) {
+    PushingParen.prototype.controllersRender = function () {
         var _this = this;
         var controller = document.querySelector("[data-controller]");
         var arrControllers = [];
@@ -279,7 +279,7 @@ var PushingParen = /** @class */ (function (_super) {
 }(RenderCrrent));
 var Nation = /** @class */ (function (_super) {
     __extends(Nation, _super);
-    function Nation(inputDate, weekend, disabled) {
+    function Nation(inputDate, disabled, weekend) {
         return _super.call(this, inputDate, weekend, disabled) || this;
     }
     Nation.prototype.changeMonth = function (year, month) {
@@ -331,12 +331,12 @@ var ThunderDatePicker = /** @class */ (function () {
     ThunderDatePicker.prototype.pushingParen = function () {
         var pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled);
         pushingParen.setParentLayout(this.paren);
-        pushingParen.controllersRender(this.option.lang);
+        pushingParen.controllersRender();
         pushingParen.setDays();
     };
     ThunderDatePicker.prototype.renderDays = function () {
         var renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled);
-        var nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled);
+        var nation = new Nation(this.option.inputDate, this.option.disabled);
         nation.changeMonth(this.option.year, this.option.month);
         renderCrrent.changeYearMonth(this.option.year, this.option.month);
     };
