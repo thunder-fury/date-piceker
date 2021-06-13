@@ -101,6 +101,18 @@ var RenderCrrent = /** @class */ (function () {
         var calendarBody = document.querySelector("[data-calendarBody]");
         this.renderDate(arrCalender, calendarBody, year, month);
     };
+    // 주말 표시
+    RenderCrrent.prototype.weekendRnder = function (arrDates, date, i) {
+        if (i % 7 == 6) {
+            arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
+        }
+        else if (i % 7 == 0) {
+            arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+        }
+        else {
+            arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+        }
+    };
     RenderCrrent.prototype.renderDate = function (date, calendarBody, year, month) {
         var arrDates = [];
         for (var i = 0; i < date.length; i++) {
@@ -111,44 +123,59 @@ var RenderCrrent = /** @class */ (function () {
                 arrDates.push("</div>");
                 arrDates.push("<div class='calendarRow'>");
             }
-            // 일요일
-            // if(i%7 == 0) {
-            //   if(this.weekend) {
-            //     arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
-            //   } else {
-            //     arrDates.push(`<div data-setdate class="calendarDay workday saturday">${date[i]}</div>`)
-            //   }
-            // // 토요일
-            // } 
-            // else if(i%7 == 6) {
-            //   if(this.weekend) {
-            //     arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
-            //   } else {
-            //     arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
-            //   }
-            // } 
-            else if (this.disabled) {
+            if (this.disabled) {
                 if (year == this.getCurrentDate().year && month == this.getCurrentDate().month && i > this.getCurrentDate().day) {
-                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                    // 금년 당월 당일 이후 렌더
+                    this.weekendRnder(arrDates, date, i);
                 }
                 else if (year < this.getCurrentDate().year && month < this.getCurrentDate().month) {
+                    // 금년 이전 당월 이전 렌더
                     arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
                 }
                 else if (year < this.getCurrentDate().year) {
+                    // 금년 이전 렌더
                     arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
                 }
                 else if (month > this.getCurrentDate().month) {
-                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                    // 당월 이후 렌더
+                    this.weekendRnder(arrDates, date, i);
                 }
                 else if (year > this.getCurrentDate().year) {
-                    arrDates.push("<div data-setdate class=\"calendarDay\">" + date[i] + "</div>");
+                    // 금년 이후 렌더
+                    this.weekendRnder(arrDates, date, i);
                 }
                 else {
-                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                    if (i % 7 == 6) {
+                        arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
+                    }
+                    else if (i % 7 == 0) {
+                        arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+                    }
+                    else {
+                        arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                    }
                 }
             }
             else {
-                arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
+                if (i % 7 == 6) {
+                    if (this.weekend) {
+                        arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
+                    }
+                    else {
+                        arrDates.push("<div data-setdate class=\"calendarDay workday sunday\"> " + date[i] + "</div>");
+                    }
+                }
+                else if (i % 7 == 0) {
+                    if (this.weekend) {
+                        arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+                    }
+                    else {
+                        arrDates.push("<div data-setdate class=\"calendarDay workday saturday\">" + date[i] + "</div>");
+                    }
+                }
+                else {
+                    arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
+                }
             }
         }
         arrDates.push('</div>');
@@ -193,7 +220,7 @@ var PushingParen = /** @class */ (function (_super) {
         calendarLayout.push("<div data-calendarBody></div>");
         calendarElm.innerHTML = calendarLayout.join('');
     };
-    PushingParen.prototype.controllersRender = function () {
+    PushingParen.prototype.controllersRender = function (lang) {
         var _this = this;
         var controller = document.querySelector("[data-controller]");
         var arrControllers = [];
@@ -211,7 +238,15 @@ var PushingParen = /** @class */ (function (_super) {
                 var monthElm_1 = document.querySelector('[data-month]');
                 var option = document.createElement('option');
                 option.value = months[i];
-                option.text = months[i] + "\uC6D4";
+                if (_this.lang == 'ko') {
+                    option.text = months[i] + "\uC6D4";
+                }
+                else if (_this.lang == 'ja') {
+                    option.text = months[i] + "\u6708";
+                }
+                else {
+                    option.text = "" + months[i];
+                }
                 monthElm_1.appendChild(option);
             }
             monthElm.value = _this.month;
@@ -296,7 +331,7 @@ var ThunderDatePicker = /** @class */ (function () {
     ThunderDatePicker.prototype.pushingParen = function () {
         var pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled);
         pushingParen.setParentLayout(this.paren);
-        pushingParen.controllersRender();
+        pushingParen.controllersRender(this.option.lang);
         pushingParen.setDays();
     };
     ThunderDatePicker.prototype.renderDays = function () {

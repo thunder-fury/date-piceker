@@ -7,7 +7,7 @@ const thunderDatePicker = new ThunderDatePicker(thunderFuryDatePicker, {
   month: new Date().getMonth() + 1,
   today: new Date().getDate(),
   // weekend: true,
-  disabled: false
+  disabled: true
 })
 console.log(thunderDatePicker)
 thunderDatePicker.init();

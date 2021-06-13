@@ -9,7 +9,6 @@ class Showcalendar {
 }
 
 class RenderCrrent {
-  //TODO: 型確認
   private yearElm: any
   private monthElm: any
   constructor(private inputDate?: any, private weekend?:boolean, private disabled?:boolean) {
@@ -82,50 +81,66 @@ class RenderCrrent {
     let calendarBody:any = document.querySelector(`[data-calendarBody]`)
     this.renderDate(arrCalender, calendarBody, year, month)
   }
-
+  // 주말 표시
+  private weekendRnder(arrDates: string[], date: any, i:number) {
+    if(i%7 == 6) {
+      arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+    } else if(i%7 == 0) {
+      arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+    } else {
+      arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+    }
+  }
   private renderDate(date: any, calendarBody: Element, year: number , month: number): void {
     let arrDates = []
     for (let i = 0; i <date.length; i++) {
       if(i == 0) {
         arrDates.push(`<div class='calendarRow'>`)
-      }
-      else if(i%7 == 0) {
+      } else if(i%7 == 0) {
         arrDates.push(`</div>`)
         arrDates.push(`<div class='calendarRow'>`)
-      } 
-      
-      // 일요일
-      // if(i%7 == 0) {
-      //   if(this.weekend) {
-      //     arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
-      //   } else {
-      //     arrDates.push(`<div data-setdate class="calendarDay workday saturday">${date[i]}</div>`)
-      //   }
-      // // 토요일
-      // } 
-      // else if(i%7 == 6) {
-      //   if(this.weekend) {
-      //     arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
-      //   } else {
-      //     arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
-      //   }
-      // } 
-      else if(this.disabled) {
+      }
+      if(this.disabled) {
         if(year == this.getCurrentDate().year && month == this.getCurrentDate().month && i > this.getCurrentDate().day) {
-          arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+          // 금년 당월 당일 이후 렌더
+          this.weekendRnder(arrDates, date, i)
         } else if(year < this.getCurrentDate().year && month < this.getCurrentDate().month) {
+          // 금년 이전 당월 이전 렌더
           arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
         } else if(year < this.getCurrentDate().year) {
+          // 금년 이전 렌더
           arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
         } else if(month > this.getCurrentDate().month) {
-          arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
+          // 당월 이후 렌더
+          this.weekendRnder(arrDates, date, i)
         } else if(year > this.getCurrentDate().year) {
-          arrDates.push(`<div data-setdate class="calendarDay">${date[i]}</div>`)
-        }else {
-          arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
+          // 금년 이후 렌더
+          this.weekendRnder(arrDates, date, i)
+        } else {
+          if(i%7 == 6) {
+            arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+          } else if(i%7 == 0){
+            arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+          } else {
+            arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
+          }
         }
       } else {
-        arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
+        if(i%7 == 6) {
+          if(this.weekend) {
+            arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+          } else {
+            arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
+          }
+        } else if(i%7 == 0){
+          if(this.weekend) {
+            arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+          } else {
+            arrDates.push(`<div data-setdate class="calendarDay workday saturday">${date[i]}</div>`)
+          }
+        } else {
+          arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
+        }
       }
     }
     arrDates.push('</div>')
@@ -169,7 +184,7 @@ class PushingParen extends RenderCrrent{
     calendarLayout.push(`<div data-calendarBody></div>`)
     calendarElm.innerHTML = calendarLayout.join('')
   }
-  public controllersRender() {
+  public controllersRender(lang?: string) {
     const controller = document.querySelector(`[data-controller]`) as HTMLElement
     const arrControllers = []
     arrControllers.push(`<button type="button" data-calendarNation='pre'> < </button>`)
@@ -186,7 +201,13 @@ class PushingParen extends RenderCrrent{
         const monthElm:any = document.querySelector('[data-month]')
         let option = document.createElement('option')
         option.value = months[i]
-        option.text = `${months[i]}월`
+        if(this.lang == 'ko') {
+          option.text = `${months[i]}월`
+        } else if(this.lang == 'ja'){
+          option.text = `${months[i]}月`
+        } else {
+          option.text = `${months[i]}`
+        }
         monthElm.appendChild(option);
       }
       monthElm.value = this.month
@@ -277,12 +298,12 @@ export class ThunderDatePicker {
   pushingParen() {
     const pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled)
     pushingParen.setParentLayout(this.paren)
-    pushingParen.controllersRender()
+    pushingParen.controllersRender(this.option.lang)
     pushingParen.setDays()
   }
   
   renderDays() {
-    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled)
+    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled,)
     const nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
     nation.changeMonth(this.option.year, this.option.month)
     renderCrrent.changeYearMonth(this.option.year, this.option.month)
