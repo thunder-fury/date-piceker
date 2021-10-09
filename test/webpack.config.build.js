@@ -1,5 +1,3 @@
-import webpack from 'webpack'
-
 module.exports = {
 	entry: './src/js/app.js',
 	output: {

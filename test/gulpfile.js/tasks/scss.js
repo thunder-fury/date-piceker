@@ -6,7 +6,6 @@ const loadPlugins = require('gulp-load-plugins');
 const $ = loadPlugins();
 //scss task
 const scss = () => {
-    console.log('ここ')
     return src( paths.css_src )
         .pipe( $.sourcemaps.init())
         .pipe( $.sass())

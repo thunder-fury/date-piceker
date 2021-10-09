@@ -7,6 +7,7 @@ const paths = {
 	pug_src: './src/pug/**/*.pug',
 	pug_exclude: '!./src/pug/**/_*.pug',
 	dist: './dist/',
+	public: './public/'
 };
 
 exports.paths = paths;

@@ -7,6 +7,8 @@ const { server } = require('./tasks/server');
 const connect = require('gulp-connect-php');
 const browserSync = require('browser-sync');
 const { paths } = require('./config');
+const { build } = require('./tasks/build');
+
 const watchTask = () => {
   connect.server(
     {
@@ -34,3 +36,5 @@ exports.js = js;
 exports.server = server;
 exports.watchTask = watchTask;
 exports.copy = copy;
+
+exports.build = build;

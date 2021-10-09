@@ -8,16 +8,32 @@ class Showcalendar {
   }
 }
 
-class RenderCrrent {
-  private yearElm: any
-  private monthElm: any
-  constructor(private inputDate?: any, private weekend?:boolean, private disabled?:boolean) {
+class CurrentDate {
+  constructor() {}
+  public get(): {[key:string]: number} {
+    return {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+      day: new Date().getDate(),
+    }
+  }
+}
+
+
+
+
+class CreatCalendar {
+  public yearElm: any
+  public monthElm: any
+  public currentDate
+  constructor(
+    private inputDate?: any, 
+    private weekend?:boolean, 
+    private disabled?:boolean
+  ) {
     this.yearElm = document.querySelector('[data-year]')
     this.monthElm = document.querySelector('[data-month]')
-  }
-
-  get calendarElm(): any {
-    return { year: this.yearElm, month: this.monthElm }
+    this.currentDate = new CurrentDate()
   }
 
   private checkLeapYear(year: number): boolean {
@@ -40,14 +56,6 @@ class RenderCrrent {
 
   private getLastDayOfweek(year:number, month: number):number {
     return new Date( year, month + 1, 0 ).getDay()
-  }
-
-  private getCurrentDate(): {year: number, month:number, day: number} {
-    return { 
-      year: new Date().getFullYear(), 
-      month: (new Date().getMonth() + 1), 
-      day: new Date().getDate()
-    }
   }
 
   public changeYearMonth(year: number , month: number): void {
@@ -101,19 +109,19 @@ class RenderCrrent {
         arrDates.push(`<div class='calendarRow'>`)
       }
       if(this.disabled) {
-        if(year == this.getCurrentDate().year && month == this.getCurrentDate().month && i > this.getCurrentDate().day) {
+        if(year == this.currentDate.get().year && month == this.currentDate.get().month && date[i] >= this.currentDate.get().day) {
           // 금년 당월 당일 이후 렌더
           this.weekendRnder(arrDates, date, i)
-        } else if(year < this.getCurrentDate().year && month < this.getCurrentDate().month) {
+        } else if(year < this.currentDate.get().year && month < this.currentDate.get().month) {
           // 금년 이전 당월 이전 렌더
           arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
-        } else if(year < this.getCurrentDate().year) {
+        } else if(year < this.currentDate.get().year) {
           // 금년 이전 렌더
           arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
-        } else if(month > this.getCurrentDate().month) {
+        } else if(month > this.currentDate.get().month) {
           // 당월 이후 렌더
           this.weekendRnder(arrDates, date, i)
-        } else if(year > this.getCurrentDate().year) {
+        } else if(year > this.currentDate.get().year) {
           // 금년 이후 렌더
           this.weekendRnder(arrDates, date, i)
         } else {
@@ -156,27 +164,27 @@ class RenderCrrent {
         if(setdateElm.attributes['disabled']) {
           setdateElm.classList.add("is-disabled")
         } else {
-          setTimeout(() => {
-            this.inputDate.value = this.yearElm.value + this.monthElm.value + day
-          }, 100);
+          this.inputDate.value = this.yearElm.value + this.monthElm.value + day
         }
       })
     });
   }
 }
 
-class PushingParen extends RenderCrrent{
-  constructor( 
-    private lang: string, 
-    private months: string[], 
-    private year: number, 
-    private month: number, 
-    disabled: boolean,
-    inputDate?: HTMLInputElement, 
-    weekend?:boolean,
-    ) {
-    super(inputDate, weekend, disabled)
+class PushingParen extends CreatCalendar{
+  constructor(
+    private paren: {
+      lang: string, 
+      months: string[], 
+      year: number, 
+      month: number, 
+      disabled: boolean,
+      inputDate?: HTMLInputElement, 
+      weekend?:boolean
+    }) {
+    super(paren.inputDate, paren.weekend, paren.disabled)
   }
+  //초기 컨데이너 렌더링
   public setParentLayout(calendarElm: HTMLElement){
     let calendarLayout = []
     calendarLayout.push(`<div data-controller></div>`)
@@ -194,23 +202,23 @@ class PushingParen extends RenderCrrent{
     controller.innerHTML = arrControllers.join('')
     const yearElm:any  = document.querySelector('[data-year]')
     const monthElm: any = document.querySelector('[data-month]')
-    yearElm.value = this.year
+    yearElm.value = this.paren.year
     setTimeout(() => {
       const months:any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
       for (let i = 0; i < months.length; i++) {
         const monthElm:any = document.querySelector('[data-month]')
         let option = document.createElement('option')
         option.value = months[i]
-        if(this.lang == 'ko') {
+        if(this.paren.lang == 'ko') {
           option.text = `${months[i]}월`
-        } else if(this.lang == 'ja'){
+        } else if(this.paren.lang == 'ja'){
           option.text = `${months[i]}月`
         } else {
           option.text = `${months[i]}`
         }
         monthElm.appendChild(option);
       }
-      monthElm.value = this.month
+      monthElm.value = this.paren.month
     }, 100);
   }
   
@@ -223,9 +231,9 @@ class PushingParen extends RenderCrrent{
     Object.keys(langs).forEach((key, i) => {
       let arrDays = []
       let weekdays:any = document.querySelector(`[data-weekdays]`)
-      if(this.lang) {
-        for (let i = 0; i < langs[this.lang].length; i++) {
-          arrDays.push(`<div class='weekdayItem'>${langs[this.lang][i]}</div>`)
+      if(this.paren.lang) {
+        for (let i = 0; i < langs[this.paren.lang].length; i++) {
+          arrDays.push(`<div class='weekdayItem'>${langs[this.paren.lang][i]}</div>`)
         }
       } else {
         for (let i = 0; i < langs['en'].length; i++) {
@@ -237,8 +245,8 @@ class PushingParen extends RenderCrrent{
   }
 }
 
-class Nation extends RenderCrrent{
-  constructor(inputDate: HTMLInputElement, weekend:boolean, disabled: boolean){
+class Nation extends CreatCalendar{
+  constructor(inputDate: HTMLInputElement, weekend:boolean, disabled: boolean) {
     super(inputDate, weekend, disabled)
   }
   changeMonth(year: number, month: number): void {
@@ -268,52 +276,72 @@ class Nation extends RenderCrrent{
         this.changeYearMonth(year, month)
       })
       calendarNation.addEventListener('change', () =>{
-        year = parseInt(this.calendarElm.year.value)
-        month = parseInt(this.calendarElm.month.value)
+        year = parseInt(this.yearElm.value)
+        month = parseInt(this.monthElm.value)
         this.dateWatch(year, month)
       })
     })
   }
   dateWatch(year: number, month:number): void {
-    this.calendarElm.year.value = year
-    this.calendarElm.month.value = month
+    this.yearElm.value = year
+    this.monthElm.value = month
     this.changeYearMonth(year, month)
   }
 }
 
+
+type option = {
+  inputDate: HTMLInputElement, 
+  disabled: boolean,
+  year: number, 
+  month: number,
+  today: number
+  weekend:boolean, 
+  lang: string, 
+  months: string[]
+}
+
 export class ThunderDatePicker {
+  public currentDate
+  public showcalendarnew
+  public pushingParen
+  // public renderCrrent
+  // public nation
   constructor(
-    private paren:HTMLElement, 
-    private option:{
-      disabled: boolean
-      inputDate: HTMLInputElement, 
-      year: number, 
-      month: number,
-      today: number
-      weekend:boolean, 
-      lang: string, 
-      months: string[]
-    }) {
-  }
-  pushingParen() {
-    const pushingParen = new PushingParen(this.option.lang, this.option.months, this.option.year, this.option.month, this.option.disabled)
-    pushingParen.setParentLayout(this.paren)
-    pushingParen.controllersRender(this.option.lang)
-    pushingParen.setDays()
-  }
-  
-  renderDays() {
-    const renderCrrent = new RenderCrrent(this.option.inputDate, this.option.weekend, this.option.disabled,)
-    const nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
-    nation.changeMonth(this.option.year, this.option.month)
-    renderCrrent.changeYearMonth(this.option.year, this.option.month)
-  }
+    private paren: HTMLElement, 
+    private option: option, 
+    public nation: any, 
+    public creatCalendar: any
+    ) {
+      this.currentDate = new CurrentDate()
+      this.showcalendarnew = new Showcalendar(this.paren, this.option.inputDate)
+      this.pushingParen = new PushingParen({
+        lang: this.option.lang, 
+        months :this.option.months, 
+        year: this.currentDate.get().year, 
+        month: this.currentDate.get().month,
+        disabled: this.option.disabled
+      })}
+      renderElements() {
+        this.pushingParen.setParentLayout(this.paren)
+        this.pushingParen.controllersRender(this.option.lang)
+        this.pushingParen.setDays()
+      }
+      
+    renderDays() {
+      this.nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
+      this.creatCalendar = new CreatCalendar(this.option.inputDate, this.option.weekend,  this.option.disabled  )
+      this.nation.changeMonth( this.currentDate.get().year, this.currentDate.get().month
+      )
+      this.creatCalendar.changeYearMonth(
+        this.currentDate.get().year, this.currentDate.get().month
+      )
+    }
   calendarToggle() {
-    const showcalendarnew = new Showcalendar(this.paren, this.option.inputDate)
-    showcalendarnew.calendarDisplay();
+    this.showcalendarnew.calendarDisplay();
   }
   init() {
-    this.pushingParen()
+    this.renderElements()
     this.calendarToggle()
     this.renderDays()
   }
