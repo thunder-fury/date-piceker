@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm publish --access public",
     "start": "tsc --watch",
     "test": "cd test && npm run start"
   },
@@ -23,7 +23,7 @@
     "type": "git",
     "url": "git+https://github.com/thuder-fury/fade-event/.git"
   },
-  "author": "wiz-creative",
+  "author": "thunder-fury <whw3312@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/thuder-fury/fade-event/issues"
