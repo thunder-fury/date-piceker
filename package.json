@@ -1,35 +1,30 @@
 {
-  "name": "form-validate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "name": "@thunder_fury/date-picker",
+  "version": "0.0.7",
+  "description": "simple date picker",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "start": "tsc --watch",
-    "test": "cd test && npm run start"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*": [
-      "secretlint"
-    ]
+    "build": "tsc && npm publish --access public",
+    "npm-build": "npm publish --access public",
+    "start": "tsc --watch && cd ./test/gulp"
+
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thuder-fury/fade-event/.git"
+    "url": "git+https://github.com/thunder-fury/date-piceker"
   },
-  "author": "wiz-creative",
+  "keywords": [
+    "date picker"
+  ],
+  "author": "thunder-fury <whw3312@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thuder-fury/fade-event/issues"
+    "url": "https://github.com/thunder-fury/date-piceker/issues"
   },
-  "homepage": "https://github.com/thuder-fury/fade-event/#readme",
-  "devDependencies": {
+  "homepage": "https://thunder-fury-datepicker.netlify.app/",
+  "dependencies": {
     "typescript": "^4.3.2"
   }
 }
+

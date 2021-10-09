@@ -4,7 +4,7 @@ const thunderFuryDatePicker = document.querySelector('.thunderFury-datePicker');
 const thunderDatePicker = new ThunderDatePicker(thunderFuryDatePicker, {
   inputDate,
   today: new Date().getDate(),
-  weekend: true,
+  // weekend: true,
   // disabled: true
 })
 console.log(thunderDatePicker)
