@@ -45,7 +45,7 @@ thunderDatePicker.init();
 ## Option
 |  Name  |  Required  |  Type  | DefaultValue  | Description  |
 | ---- | ---- |  ----  |  ----  |  ----  | 
-|  inputDate  |  ○  |  string  |  -  |  Input elment to set date |
+|  inputDate  |  ○  |  HTMLInputElement  |  -  |  Input elment to set date |
 |  weekend  |  -  |  boolean  |  -  |  weekend disabled |
 |  disabled  |  -  |  boolean  |  -  |  On the day disabled |
 
