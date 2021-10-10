@@ -115,6 +115,7 @@ var CreatCalendar = /** @class */ (function () {
     CreatCalendar.prototype.renderDate = function (date, calendarBody, year, month) {
         var arrDates = [];
         for (var i = 0; i < date.length; i++) {
+            var empty = date[i] == "" ? "empty" : "workday";
             if (i == 0) {
                 arrDates.push("<div class='calendarRow'>");
             }
@@ -161,7 +162,7 @@ var CreatCalendar = /** @class */ (function () {
                         arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
                     }
                     else {
-                        arrDates.push("<div data-setdate class=\"calendarDay workday sunday\"> " + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay " + empty + " sunday\"> " + date[i] + "</div>");
                     }
                 }
                 else if (i % 7 == 0) {
@@ -169,15 +170,16 @@ var CreatCalendar = /** @class */ (function () {
                         arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
                     }
                     else {
-                        arrDates.push("<div data-setdate class=\"calendarDay workday saturday\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay " + empty + " saturday\">" + date[i] + "</div>");
                     }
                 }
                 else {
-                    arrDates.push("<div data-setdate class=\"calendarDay workday\">" + date[i] + "</div>");
+                    arrDates.push("<div data-setdate class=\"calendarDay " + empty + " \">" + date[i] + "</div>");
                 }
             }
         }
         arrDates.push('</div>');
+        console.log(calendarBody);
         calendarBody.innerHTML = arrDates.join('');
         this.setDate();
     };
@@ -193,7 +195,7 @@ var CreatCalendar = /** @class */ (function () {
                     setdateElm.classList.add("is-disabled");
                 }
                 else {
-                    _this.inputDate.value = _this.yearElm.value + _this.monthElm.value + day;
+                    day == 0 ? _this.inputDate.value = '' : _this.inputDate.value = _this.yearElm.value + _this.monthElm.value + day;
                 }
             });
         });
@@ -216,7 +218,6 @@ var PushingParen = /** @class */ (function (_super) {
         calendarElm.innerHTML = calendarLayout.join('');
     };
     PushingParen.prototype.controllersRender = function (lang) {
-        var _this = this;
         var controller = document.querySelector("[data-controller]");
         var arrControllers = [];
         arrControllers.push("<button type=\"button\" data-calendarNation='pre'> < </button>");
@@ -227,25 +228,23 @@ var PushingParen = /** @class */ (function (_super) {
         var yearElm = document.querySelector('[data-year]');
         var monthElm = document.querySelector('[data-month]');
         yearElm.value = this.paren.year;
-        setTimeout(function () {
-            var months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-            for (var i = 0; i < months.length; i++) {
-                var monthElm_1 = document.querySelector('[data-month]');
-                var option = document.createElement('option');
-                option.value = months[i];
-                if (_this.paren.lang == 'ko') {
-                    option.text = months[i] + "\uC6D4";
-                }
-                else if (_this.paren.lang == 'ja') {
-                    option.text = months[i] + "\u6708";
-                }
-                else {
-                    option.text = "" + months[i];
-                }
-                monthElm_1.appendChild(option);
+        var months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        for (var i = 0; i < months.length; i++) {
+            var monthElm_1 = document.querySelector('[data-month]');
+            var option = document.createElement('option');
+            option.value = months[i];
+            if (this.paren.lang == 'ko') {
+                option.text = months[i] + "\uC6D4";
             }
-            monthElm.value = _this.paren.month;
-        }, 100);
+            else if (this.paren.lang == 'ja') {
+                option.text = months[i] + "\u6708";
+            }
+            else {
+                option.text = "" + months[i];
+            }
+            monthElm_1.appendChild(option);
+        }
+        monthElm.value = this.paren.month;
     };
     PushingParen.prototype.setDays = function () {
         var _this = this;
@@ -358,3 +357,10 @@ var ThunderDatePicker = /** @class */ (function () {
     return ThunderDatePicker;
 }());
 exports.ThunderDatePicker = ThunderDatePicker;
+// export class Test {
+//   constructor(public value: string) {
+//   }
+//   setVal() {
+//     return this.value
+//   }
+// }

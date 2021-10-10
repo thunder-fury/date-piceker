@@ -19,9 +19,6 @@ class CurrentDate {
   }
 }
 
-
-
-
 class CreatCalendar {
   public yearElm: any
   public monthElm: any
@@ -82,7 +79,7 @@ class CreatCalendar {
         arrCalender.push('')
       }
     }
-
+    
     for (let i = 0; i <= lastDayOfWeek; i++) {
       arrCalender.push('')
     }
@@ -102,6 +99,7 @@ class CreatCalendar {
   private renderDate(date: any, calendarBody: Element, year: number , month: number): void {
     let arrDates = []
     for (let i = 0; i <date.length; i++) {
+      const empty = date[i] == `` ? `empty`: `workday`
       if(i == 0) {
         arrDates.push(`<div class='calendarRow'>`)
       } else if(i%7 == 0) {
@@ -111,6 +109,7 @@ class CreatCalendar {
       if(this.disabled) {
         if(year == this.currentDate.get().year && month == this.currentDate.get().month && date[i] >= this.currentDate.get().day) {
           // 금년 당월 당일 이후 렌더
+          
           this.weekendRnder(arrDates, date, i)
         } else if(year < this.currentDate.get().year && month < this.currentDate.get().month) {
           // 금년 이전 당월 이전 렌더
@@ -138,20 +137,21 @@ class CreatCalendar {
           if(this.weekend) {
             arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
           } else {
-            arrDates.push(`<div data-setdate class="calendarDay workday sunday"> ${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay ${empty} sunday"> ${date[i]}</div>`)
           }
         } else if(i%7 == 0){
           if(this.weekend) {
             arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
           } else {
-            arrDates.push(`<div data-setdate class="calendarDay workday saturday">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay ${empty} saturday">${date[i]}</div>`)
           }
         } else {
-          arrDates.push(`<div data-setdate class="calendarDay workday">${date[i]}</div>`)
+          arrDates.push(`<div data-setdate class="calendarDay ${empty} ">${date[i]}</div>`)
         }
       }
     }
     arrDates.push('</div>')
+    console.log(calendarBody)
     calendarBody.innerHTML = arrDates.join('')
     this.setDate()
   }
@@ -164,7 +164,7 @@ class CreatCalendar {
         if(setdateElm.attributes['disabled']) {
           setdateElm.classList.add("is-disabled")
         } else {
-          this.inputDate.value = this.yearElm.value + this.monthElm.value + day
+          day == 0 ? this.inputDate.value = '': this.inputDate.value = this.yearElm.value + this.monthElm.value + day
         }
       })
     });
@@ -203,23 +203,21 @@ class PushingParen extends CreatCalendar{
     const yearElm:any  = document.querySelector('[data-year]')
     const monthElm: any = document.querySelector('[data-month]')
     yearElm.value = this.paren.year
-    setTimeout(() => {
-      const months:any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-      for (let i = 0; i < months.length; i++) {
-        const monthElm:any = document.querySelector('[data-month]')
-        let option = document.createElement('option')
-        option.value = months[i]
-        if(this.paren.lang == 'ko') {
-          option.text = `${months[i]}월`
-        } else if(this.paren.lang == 'ja'){
-          option.text = `${months[i]}月`
-        } else {
-          option.text = `${months[i]}`
-        }
-        monthElm.appendChild(option);
+    const months:any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    for (let i = 0; i < months.length; i++) {
+      const monthElm:any = document.querySelector('[data-month]')
+      let option = document.createElement('option')
+      option.value = months[i]
+      if(this.paren.lang == 'ko') {
+        option.text = `${months[i]}월`
+      } else if(this.paren.lang == 'ja'){
+        option.text = `${months[i]}月`
+      } else {
+        option.text = `${months[i]}`
       }
-      monthElm.value = this.paren.month
-    }, 100);
+      monthElm.appendChild(option);
+    }
+    monthElm.value = this.paren.month
   }
   
   public setDays() {
@@ -346,3 +344,12 @@ export class ThunderDatePicker {
     this.renderDays()
   }
 }
+
+
+// export class Test {
+//   constructor(public value: string) {
+//   }
+//   setVal() {
+//     return this.value
+//   }
+// }
