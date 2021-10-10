@@ -42,10 +42,12 @@ var CurrentDate = /** @class */ (function () {
     return CurrentDate;
 }());
 var CreatCalendar = /** @class */ (function () {
-    function CreatCalendar(inputDate, weekend, disabled) {
+    function CreatCalendar(inputDate, weekend, disabled, minDate, maxDate) {
         this.inputDate = inputDate;
         this.weekend = weekend;
         this.disabled = disabled;
+        this.minDate = minDate;
+        this.maxDate = maxDate;
         this.yearElm = document.querySelector('[data-year]');
         this.monthElm = document.querySelector('[data-month]');
         this.currentDate = new CurrentDate();
@@ -124,7 +126,10 @@ var CreatCalendar = /** @class */ (function () {
                 arrDates.push("<div class='calendarRow'>");
             }
             if (this.disabled) {
-                if (year == this.currentDate.get().year && month == this.currentDate.get().month && date[i] >= this.currentDate.get().day) {
+                console.log(this.minDate);
+                if (year == this.currentDate.get().year &&
+                    month == this.currentDate.get().month &&
+                    date[i] >= this.currentDate.get().day) {
                     // 금년 당월 당일 이후 렌더
                     this.weekendRnder(arrDates, date, i);
                 }
@@ -342,7 +347,7 @@ var ThunderDatePicker = /** @class */ (function () {
     };
     ThunderDatePicker.prototype.renderDays = function () {
         this.nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled);
-        this.creatCalendar = new CreatCalendar(this.option.inputDate, this.option.weekend, this.option.disabled);
+        this.creatCalendar = new CreatCalendar(this.option.inputDate, this.option.weekend, this.option.disabled, this.option.minDate, this.option.maxDate);
         this.nation.changeMonth(this.currentDate.get().year, this.currentDate.get().month);
         this.creatCalendar.changeYearMonth(this.currentDate.get().year, this.currentDate.get().month);
     };
@@ -357,10 +362,3 @@ var ThunderDatePicker = /** @class */ (function () {
     return ThunderDatePicker;
 }());
 exports.ThunderDatePicker = ThunderDatePicker;
-// export class Test {
-//   constructor(public value: string) {
-//   }
-//   setVal() {
-//     return this.value
-//   }
-// }

@@ -26,7 +26,10 @@ class CreatCalendar {
   constructor(
     private inputDate?: any, 
     private weekend?:boolean, 
-    private disabled?:boolean
+    private disabled?:boolean,
+    private minDate?: number,
+    private maxDate?: number,
+
   ) {
     this.yearElm = document.querySelector('[data-year]')
     this.monthElm = document.querySelector('[data-month]')
@@ -107,7 +110,11 @@ class CreatCalendar {
         arrDates.push(`<div class='calendarRow'>`)
       }
       if(this.disabled) {
-        if(year == this.currentDate.get().year && month == this.currentDate.get().month && date[i] >= this.currentDate.get().day) {
+        console.log(this.minDate)
+        if( year == this.currentDate.get().year && 
+            month == this.currentDate.get().month && 
+            date[i] >= this.currentDate.get().day
+          ) {
           // 금년 당월 당일 이후 렌더
           
           this.weekendRnder(arrDates, date, i)
@@ -289,14 +296,16 @@ class Nation extends CreatCalendar{
 
 
 type option = {
-  inputDate: HTMLInputElement, 
-  disabled: boolean,
-  year: number, 
-  month: number,
+  inputDate: HTMLInputElement 
+  disabled: boolean
+  year: number 
+  month: number
   today: number
-  weekend:boolean, 
-  lang: string, 
+  weekend:boolean
+  lang: string
   months: string[]
+  minDate: number
+  maxDate: number
 }
 
 export class ThunderDatePicker {
@@ -328,7 +337,13 @@ export class ThunderDatePicker {
       
     renderDays() {
       this.nation = new Nation(this.option.inputDate, this.option.weekend, this.option.disabled)
-      this.creatCalendar = new CreatCalendar(this.option.inputDate, this.option.weekend,  this.option.disabled  )
+      this.creatCalendar = new CreatCalendar(
+        this.option.inputDate, 
+        this.option.weekend,  
+        this.option.disabled, 
+        this.option.minDate,
+        this.option.maxDate,
+      )
       this.nation.changeMonth( this.currentDate.get().year, this.currentDate.get().month
       )
       this.creatCalendar.changeYearMonth(
@@ -344,12 +359,3 @@ export class ThunderDatePicker {
     this.renderDays()
   }
 }
-
-
-// export class Test {
-//   constructor(public value: string) {
-//   }
-//   setVal() {
-//     return this.value
-//   }
-// }
