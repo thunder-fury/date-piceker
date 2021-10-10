@@ -30,7 +30,8 @@ var Showcalendar = /** @class */ (function () {
     return Showcalendar;
 }());
 var CurrentDate = /** @class */ (function () {
-    function CurrentDate() {
+    function CurrentDate(confDate) {
+        this.confDate = confDate;
     }
     CurrentDate.prototype.get = function () {
         return {
@@ -50,7 +51,7 @@ var CreatCalendar = /** @class */ (function () {
         this.maxDate = maxDate;
         this.yearElm = document.querySelector('[data-year]');
         this.monthElm = document.querySelector('[data-month]');
-        this.currentDate = new CurrentDate();
+        this.currentDate = new CurrentDate({ minDate: this.minDate });
     }
     CreatCalendar.prototype.checkLeapYear = function (year) {
         // 윤년 계산
@@ -117,7 +118,8 @@ var CreatCalendar = /** @class */ (function () {
     CreatCalendar.prototype.renderDate = function (date, calendarBody, year, month) {
         var arrDates = [];
         for (var i = 0; i < date.length; i++) {
-            var empty = date[i] == "" ? "empty" : "workday";
+            var weekendEmpty = date[i] == "" ? "empty" : "workday";
+            var disabledEmpty = date[i] == "" ? "empty" : "is-disabled";
             if (i == 0) {
                 arrDates.push("<div class='calendarRow'>");
             }
@@ -126,20 +128,18 @@ var CreatCalendar = /** @class */ (function () {
                 arrDates.push("<div class='calendarRow'>");
             }
             if (this.disabled) {
-                console.log(this.minDate);
                 if (year == this.currentDate.get().year &&
                     month == this.currentDate.get().month &&
                     date[i] >= this.currentDate.get().day) {
-                    // 금년 당월 당일 이후 렌더
                     this.weekendRnder(arrDates, date, i);
                 }
                 else if (year < this.currentDate.get().year && month < this.currentDate.get().month) {
                     // 금년 이전 당월 이전 렌더
-                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                    arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
                 }
                 else if (year < this.currentDate.get().year) {
                     // 금년 이전 렌더
-                    arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                    arrDates.push("<div data-setdate class=\"calendarDay is-disabled\">" + date[i] + "</div>");
                 }
                 else if (month > this.currentDate.get().month) {
                     // 당월 이후 렌더
@@ -151,35 +151,35 @@ var CreatCalendar = /** @class */ (function () {
                 }
                 else {
                     if (i % 7 == 6) {
-                        arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay sunday " + disabledEmpty + "\">" + date[i] + "</div>");
                     }
                     else if (i % 7 == 0) {
-                        arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay saturday " + disabledEmpty + "\">" + date[i] + "</div>");
                     }
                     else {
-                        arrDates.push("<div data-setdate disabled class=\"calendarDay is-disabled\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay " + disabledEmpty + "\">" + date[i] + "</div>");
                     }
                 }
             }
             else {
                 if (i % 7 == 6) {
                     if (this.weekend) {
-                        arrDates.push("<div data-setdate disabled class=\"calendarDay sunday is-disabled\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay sunday " + disabledEmpty + "\">" + date[i] + "</div>");
                     }
                     else {
-                        arrDates.push("<div data-setdate class=\"calendarDay " + empty + " sunday\"> " + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay " + weekendEmpty + " sunday\"> " + date[i] + "</div>");
                     }
                 }
                 else if (i % 7 == 0) {
                     if (this.weekend) {
-                        arrDates.push("<div data-setdate disabled class=\"calendarDay saturday is-disabled\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay saturday " + disabledEmpty + "\">" + date[i] + "</div>");
                     }
                     else {
-                        arrDates.push("<div data-setdate class=\"calendarDay " + empty + " saturday\">" + date[i] + "</div>");
+                        arrDates.push("<div data-setdate class=\"calendarDay " + weekendEmpty + " saturday\">" + date[i] + "</div>");
                     }
                 }
                 else {
-                    arrDates.push("<div data-setdate class=\"calendarDay " + empty + " \">" + date[i] + "</div>");
+                    arrDates.push("<div data-setdate class=\"calendarDay " + weekendEmpty + " \">" + date[i] + "</div>");
                 }
             }
         }
@@ -200,7 +200,13 @@ var CreatCalendar = /** @class */ (function () {
                     setdateElm.classList.add("is-disabled");
                 }
                 else {
-                    day == 0 ? _this.inputDate.value = '' : _this.inputDate.value = _this.yearElm.value + _this.monthElm.value + day;
+                    // day == 0 ? this.inputDate.value = '': this.inputDate.value = this.yearElm.value + this.monthElm.value + day
+                    if (day == 0) {
+                        return;
+                    }
+                    else {
+                        _this.inputDate.value = _this.yearElm.value + "-" + _this.monthElm.value + "-" + day;
+                    }
                 }
             });
         });

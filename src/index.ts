@@ -9,7 +9,7 @@ class Showcalendar {
 }
 
 class CurrentDate {
-  constructor() {}
+  constructor(private confDate?:{minDate?: number, maxDate?: number}) {}
   public get(): {[key:string]: number} {
     return {
       year: new Date().getFullYear(),
@@ -29,13 +29,11 @@ class CreatCalendar {
     private disabled?:boolean,
     private minDate?: number,
     private maxDate?: number,
-
   ) {
     this.yearElm = document.querySelector('[data-year]')
     this.monthElm = document.querySelector('[data-month]')
-    this.currentDate = new CurrentDate()
+    this.currentDate = new CurrentDate({minDate: this.minDate})
   }
-
   private checkLeapYear(year: number): boolean {
     // 윤년 계산
     if(year%400 == 0) {
@@ -102,7 +100,8 @@ class CreatCalendar {
   private renderDate(date: any, calendarBody: Element, year: number , month: number): void {
     let arrDates = []
     for (let i = 0; i <date.length; i++) {
-      const empty = date[i] == `` ? `empty`: `workday`
+      const weekendEmpty = date[i] == `` ? `empty`: `workday`
+      const disabledEmpty = date[i] == `` ? `empty`: `is-disabled`
       if(i == 0) {
         arrDates.push(`<div class='calendarRow'>`)
       } else if(i%7 == 0) {
@@ -110,20 +109,17 @@ class CreatCalendar {
         arrDates.push(`<div class='calendarRow'>`)
       }
       if(this.disabled) {
-        console.log(this.minDate)
-        if( year == this.currentDate.get().year && 
-            month == this.currentDate.get().month && 
+        if( year == this.currentDate.get().year &&  
+            month == this.currentDate.get().month &&  
             date[i] >= this.currentDate.get().day
           ) {
-          // 금년 당월 당일 이후 렌더
-          
           this.weekendRnder(arrDates, date, i)
         } else if(year < this.currentDate.get().year && month < this.currentDate.get().month) {
           // 금년 이전 당월 이전 렌더
-          arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
+          arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
         } else if(year < this.currentDate.get().year) {
           // 금년 이전 렌더
-          arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
+          arrDates.push(`<div data-setdate class="calendarDay is-disabled">${date[i]}</div>`)
         } else if(month > this.currentDate.get().month) {
           // 당월 이후 렌더
           this.weekendRnder(arrDates, date, i)
@@ -132,28 +128,28 @@ class CreatCalendar {
           this.weekendRnder(arrDates, date, i)
         } else {
           if(i%7 == 6) {
-            arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay sunday ${disabledEmpty}">${date[i]}</div>`)
           } else if(i%7 == 0){
-            arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay saturday ${disabledEmpty}">${date[i]}</div>`)
           } else {
-            arrDates.push(`<div data-setdate disabled class="calendarDay is-disabled">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay ${disabledEmpty}">${date[i]}</div>`)
           }
         }
       } else {
         if(i%7 == 6) {
           if(this.weekend) {
-            arrDates.push(`<div data-setdate disabled class="calendarDay sunday is-disabled">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay sunday ${disabledEmpty}">${date[i]}</div>`)
           } else {
-            arrDates.push(`<div data-setdate class="calendarDay ${empty} sunday"> ${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay ${weekendEmpty} sunday"> ${date[i]}</div>`)
           }
         } else if(i%7 == 0){
           if(this.weekend) {
-            arrDates.push(`<div data-setdate disabled class="calendarDay saturday is-disabled">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay saturday ${disabledEmpty}">${date[i]}</div>`)
           } else {
-            arrDates.push(`<div data-setdate class="calendarDay ${empty} saturday">${date[i]}</div>`)
+            arrDates.push(`<div data-setdate class="calendarDay ${weekendEmpty} saturday">${date[i]}</div>`)
           }
         } else {
-          arrDates.push(`<div data-setdate class="calendarDay ${empty} ">${date[i]}</div>`)
+          arrDates.push(`<div data-setdate class="calendarDay ${weekendEmpty} ">${date[i]}</div>`)
         }
       }
     }
@@ -171,8 +167,13 @@ class CreatCalendar {
         if(setdateElm.attributes['disabled']) {
           setdateElm.classList.add("is-disabled")
         } else {
-          day == 0 ? this.inputDate.value = '': this.inputDate.value = this.yearElm.value + this.monthElm.value + day
-        }
+          // day == 0 ? this.inputDate.value = '': this.inputDate.value = this.yearElm.value + this.monthElm.value + day
+          if(day == 0 ) {
+            return
+          } else {
+            this.inputDate.value = `${this.yearElm.value}-${this.monthElm.value}-${day}`
+          }
+        } 
       })
     });
   }

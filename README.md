@@ -1,5 +1,7 @@
 # @thunder_fury/date-picker
 
+Underwarn development...
+
 <p align=''>
 <img src='https://img.shields.io/badge/node-v14.15.4-blue'/> 
 <a href='https://www.npmjs.com/package/@thunder_fury/date-picker' target='blank' >
@@ -39,6 +41,14 @@ const thunderDatePicker = new ThunderDatePicker(thunderFuryDatePicker, {
 thunderDatePicker.init();
 
 ```
+
+## Option
+|  Name  |  Required  |  Type  | DefaultValue  | Description  |
+| ---- | ---- |  ----  |  ----  |  ----  | 
+|  inputDate  |  ○  |  string  |  -  |  Input elment to set date |
+|  weekend  |  -  |  boolean  |  -  |  weekend disabled |
+|  disabled  |  -  |  boolean  |  -  |  On the day disabled |
+
 <br />
 <br />
 <h2 align='center'> 🗓 Sample </h2>
