@@ -8,26 +8,18 @@ const connect = require('gulp-connect-php');
 const browserSync = require('browser-sync');
 const { paths } = require('./config');
 const { build } = require('./tasks/build');
+const serve = browserSync.create();
 
 const watchTask = () => {
-  connect.server(
-    {
-      port: 8001,
-      base: paths.dist,
-    },
-    () => {
-      browserSync({
-        proxy: 'localhost:8001',
-      });
-    },
-  );
-  const browserReload = () => {
-    browserSync.reload();
-  };
+  serve.init({
+    server: {
+      baseDir: paths.dist
+    }
+  })
   watch(
-    ['src/scss/**/*', 'src/js/**/*', 'src/pug/**/*', '../dist/index.js'],
-    parallel(pug, scss, js, copy),
-  ).on('change', series(browserReload));
+    ['src/scss/**/*', 'src/js/**/*', 'src/pug/**/*'],
+    parallel(pug, scss, js),
+  ).on('change', serve.reload);
 };
 exports.default = series(parallel(pug, scss, js, copy), watchTask);
 exports.pug = pug;

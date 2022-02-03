@@ -8,30 +8,34 @@
 		"start": "gulp"
 	},
 	"devDependencies": {
-		"autoprefixer": "^10.2.6",
+		"autoprefixer": "^10.4.0",
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.0",
 		"babel-loader": "^7.1.2",
 		"babel-preset-env": "^1.7.0",
-		"browser-sync": "^2.26.14",
-		"cssnano": "^5.0.5",
+		"browser-sync": "^2.27.7",
+		"cssnano": "^5.0.12",
 		"gulp": "^4.0.2",
 		"gulp-cached": "^1.1.1",
-		"gulp-connect-php": "^1.0.1",
+		"gulp-connect-php": "^1.0.3",
 		"gulp-filter": "^5.1.0",
 		"gulp-if": "^2.0.2",
-		"gulp-load-plugins": "^2.0.6",
+		"gulp-load-plugins": "^2.0.7",
 		"gulp-plumber": "^1.2.0",
-		"gulp-postcss": "^9.0.0",
+		"gulp-postcss": "^9.0.1",
 		"gulp-pug": "^3.3.0",
 		"gulp-pug-inheritance": "^0.2.1",
 		"gulp-rename": "^1.2.2",
-		"gulp-sass": "^4.1.0",
+		"gulp-sass": "^4.1.1",
 		"gulp-sourcemaps": "^3.0.0",
 		"minimist": "^1.2.5",
-		"postcss": "^8.3.0",
-		"webpack": "^5.36.1",
+		"postcss": "^8.4.4",
+		"webpack": "^5.65.0",
 		"webpack-stream": "^6.1.2"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"gulp-connect": "^5.7.0",
+		"gulp-develop-server": "^0.5.2",
+		"gulp-webserver": "^0.9.1"
+	}
 }
